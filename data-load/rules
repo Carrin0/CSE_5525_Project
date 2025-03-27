@@ -1,0 +1,35 @@
+def generate_illegal_activity_rule() -> str:
+    pass
+
+def generate_hate_speech_rule() -> str:
+    pass
+
+def generate_malware_rule() -> str:
+    pass
+
+def generate_physical_harm_rule() -> str:
+    pass
+
+def generate_economic_harm_rule() -> str:
+    pass
+
+def generate_pornography_rule() -> str:
+    pass
+
+def generate_political_lobbying_rule() -> str:
+    pass
+
+def generate_privacy_violence_rule() -> str:
+    pass
+
+def generate_legal_opinion_rule() -> str:
+    pass
+
+def generate_financial_advice_rule() -> str:
+    pass
+
+def generate_health_consultation_rule() -> str:
+    pass
+
+def generate_gov_decision_rule() -> str:
+    pass

@@ -1,0 +1,6 @@
+numpy
+torch
+tokenizers
+transformers
+datasets
+tqdm
