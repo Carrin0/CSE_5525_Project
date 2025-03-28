@@ -29,6 +29,7 @@ def main():
 
     data_path = os.path.join('data/forbidden_questions')
     transformed_data.save_to_disk(data_path)
+    transformed_data.to_csv(data_path + '.csv', index=False)
 
 def process_safe_prompts(data, rule_nums):
     data = data['train']
@@ -39,7 +40,9 @@ def process_safe_prompts(data, rule_nums):
         datasets.append(safe_dataset)
     safe_dataset = concatenate_datasets(datasets)
     category = ['safe'] * len(safe_dataset)
+    label = [0] * len(safe_dataset)
     safe_dataset.add_column('category', category)
+    safe_dataset.add_column('label', label)
     return safe_dataset
 
 
@@ -73,8 +76,6 @@ def add_random_rules(example, num_rules):
     example['rule'] = " ".join(rules)
     #Seems like useful data to have
     example['num rules'] = num_rules
-    #Since it does contain the correct rule, it will pass
-    example['label'] = 0
 
 def add_correct_rule(example, num_wrong_rules=0):
     category = example['category']
