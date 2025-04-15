@@ -4,3 +4,10 @@ tokenizers
 transformers
 datasets
 tqdm
+scikit-learn
+ray
+xformers
+ninja
+flash_attn
+triton
+tensorboardX

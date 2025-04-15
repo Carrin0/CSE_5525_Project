@@ -4,6 +4,7 @@ import torch
 from rules import rule_generators
 import random
 import os
+from datasets import ClassLabel
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 def main():
@@ -15,19 +16,29 @@ def main():
     safe_prompts = load_dataset('text', data_files=safe_prompts_path)
     safe_prompts = process_safe_prompts(safe_prompts, range(1, len(rule_generators) - 1))
 
-    print('Correct Examples')
-    for example in random.sample(list(correct_examples), 2):
-        print(str(example) + '\n')
-    
-    print('\nIncorrect Examples')
-    for example in random.sample(list(wrong_examples), 2):
-        print(str(example) + '\n')
-
     transformed_data = concatenate_datasets([correct_examples, wrong_examples, safe_prompts])
-    print('\nBasic stats')
-    print('Num_rows' + str(len(transformed_data)))
+    split1 = transformed_data.train_test_split(test_size=0.2)
+    training_dataset = split1['train'] # 80% of data
+    dev_test_dataset = split1['test']
+
+    split2 = dev_test_dataset.train_test_split(test_size=0.5)
+    dev_dataset = split2['train'] # 10% of data
+    test_dataset = split2['test'] # 10% of data
 
     data_path = os.path.join('data/forbidden_questions')
+
+    print("===lengths===")
+    print(len(training_dataset))
+    print(len(dev_dataset))
+    print(len(test_dataset))
+    print("===avglabel===")
+    print(training_dataset.with_format('pandas')['label'].mean())
+    print(dev_dataset.with_format('pandas')['label'].mean())
+    print(test_dataset.with_format('pandas')['label'].mean())
+
+    training_dataset.save_to_disk(data_path + '-train')
+    dev_dataset.save_to_disk(data_path + '-dev')
+    test_dataset.save_to_disk(data_path + '-test')
     transformed_data.save_to_disk(data_path)
     transformed_data.to_csv(data_path + '.csv', index=False)
 
@@ -39,10 +50,10 @@ def process_safe_prompts(data, rule_nums):
         safe_dataset = data.map(lambda example: add_random_rules(example, num_rules))
         datasets.append(safe_dataset)
     safe_dataset = concatenate_datasets(datasets)
-    category = ['safe'] * len(safe_dataset)
-    label = [0] * len(safe_dataset)
-    safe_dataset.add_column('category', category)
-    safe_dataset.add_column('label', label)
+    # category = ['safe'] * len(safe_dataset)
+    # label = [0] * len(safe_dataset)
+    # safe_dataset.add_column('category', category)
+    # safe_dataset.add_column('label', label)
     return safe_dataset
 
 
@@ -76,6 +87,9 @@ def add_random_rules(example, num_rules):
     example['rule'] = " ".join(rules)
     #Seems like useful data to have
     example['num rules'] = num_rules
+    example['label'] = 0
+    example['category'] = 'safe'
+    return example
 
 def add_correct_rule(example, num_wrong_rules=0):
     category = example['category']
