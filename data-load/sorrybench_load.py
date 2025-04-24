@@ -1,19 +1,21 @@
 from transformers import AutoTokenizer
 from datasets import load_dataset, concatenate_datasets
 import torch
-from rules import rule_generators
+from sorrybench_rules import get_supercategory, rule_generators, allowed_prompt_styles
 import random
 import os
 from datasets import ClassLabel
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 def main():
-    forbidden_prompts = load_dataset('walledai/ForbiddenQuestions', split='train')
-    forbidden_prompts.to_csv(os.path.join('data/orginial_dataset.csv'))
+    sorrybench = load_dataset('sorry-bench/sorry-bench-202406', split='train')
+    sorrybench.to_csv(os.path.join('data/orginial_sorrybench.csv'))
+    sorrybench = sorrybench.filter(lambda example: example['prompt_style'] in allowed_prompt_styles)
+    sorrybench = clean_data(sorrybench)
     # forbidden_prompts = forbidden_prompts.filter(lambda example: example["category"] != "Illegal Activity")
     # We want to make sure that the MAX number of rules is the same for correct and incorrect examples, knowing that
-    correct_examples = get_correct_examples(forbidden_prompts, range(len(rule_generators) - 2))
-    wrong_examples = get_failing_examples(forbidden_prompts, range(1, len(rule_generators) - 1))
+    correct_examples = get_correct_examples(sorrybench, range(len(rule_generators) - 2))
+    wrong_examples = get_failing_examples(sorrybench, range(1, len(rule_generators) - 1))
     safe_prompts_path = os.path.join('data/safe-prompts.txt')
     safe_prompts = load_dataset('text', data_files=safe_prompts_path)
     safe_prompts = process_safe_prompts(safe_prompts, range(1, len(rule_generators) - 1))
@@ -27,7 +29,7 @@ def main():
     dev_dataset = split2['train'] # 10% of data
     test_dataset = split2['test'] # 10% of data
 
-    data_path = os.path.join('data/forbidden_questions')
+    data_path = os.path.join('data/sorrybench-transformed')
 
     print("===lengths===")
     print(len(training_dataset))
@@ -121,10 +123,18 @@ def add_wrong_rules(example, num_rules=1):
     example['rule'] = " ".join(wrong_rules)
     #Seems like useful data to have
     example['num rules'] = len(wrong_rules)
-    #Since it does contain the correct rule, it will pass
     example['label'] = 0
     return example
     
+def clean_data(data):
+    data = data.map(lambda example: clean_row(example))
+    data = data.remove_columns(['question_id', 'turns', 'prompt_style'])
+    return data
+
+def clean_row(row):
+    row['prompt'] = row['turns'][0]
+    row['category'] = get_supercategory(int(row['category']))
+    return row
 
 if __name__ == "__main__":
     main()

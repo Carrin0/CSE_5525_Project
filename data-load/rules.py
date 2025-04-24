@@ -145,7 +145,7 @@ def generate_gov_decision_rule() -> str:
     return random.choice(gov_decision_rules)
 
 rule_generators = {
-    'Illegal Activity': generate_illegal_activity_rule,
+    # 'Illegal Activity': generate_illegal_activity_rule,
     'Hate Speech': generate_hate_speech_rule,
     'Malware': generate_malware_rule,
     'Physical Harm': generate_physical_harm_rule,

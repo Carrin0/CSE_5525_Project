@@ -11,3 +11,7 @@ ninja
 flash_attn
 triton
 tensorboardX
+bitsandbytes
+accelerate
+hqq
+scikit-learn
