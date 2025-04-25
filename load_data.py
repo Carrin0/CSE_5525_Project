@@ -191,7 +191,7 @@ def load_model():
     #     param.requires_grad = False
     
     # #Unfreeze the last 25% of layers
-    # for layer in model.model.transformer_encoder[-14:]:
+    # for layer in model.model.transformer_encoder[5:]:
     #     for p in layer.parameters():
     #         p.requires_grad = True
             
@@ -200,8 +200,8 @@ def load_model():
     #     for param in layer.parameters():
     #         param.requires_grad = False 
     
-    nn.init.xavier_normal_(model.classifier.weight)
-    nn.init.zeros_(model.classifier.bias)
-    nn.init.xavier_normal_(model.dense.weight)
-    nn.init.zeros_(model.dense.bias)
+    # nn.init.xavier_normal_(model.classifier.weight)
+    # nn.init.zeros_(model.classifier.bias)
+    # nn.init.xavier_normal_(model.dense.weight)
+    # nn.init.zeros_(model.dense.bias)
     return model

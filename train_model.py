@@ -207,18 +207,61 @@ def main():
     # }
     # # training_configs = [training_config_1, training_config_2]
     
-    training_config3 = {
-        'experiment_name': '3e5lr-F7',
-        'head_lr': 3e-5,
+    training_config1 = {
+        'experiment_name': 'NoFreeze-DefaultInit-lr2e5',
+        'head_lr': 2e-5,
         'bert_lr': 5e-6,
         'num_epochs': 5,
         'batch_size': 1,
         'num_layers': 3,
         'warmup_epochs': 0.5,
+        # 'dropout': 0.1,
         'accumulation_steps': 16,
         'train_data': train_data,
         'dev_data': dev_data, 
     }
+    training_config2 = {
+        'experiment_name': 'NoFreeze-DefaultInit-lr1e5',
+        'head_lr': 1e-5,
+        'bert_lr': 5e-6,
+        'num_epochs': 5,
+        'batch_size': 1,
+        'num_layers': 3,
+        'warmup_epochs': 0.5,
+        # 'dropout': 0.2,
+        'accumulation_steps': 16,
+        'train_data': train_data,
+        'dev_data': dev_data, 
+    }
+    training_config3 = {
+        'experiment_name': 'NoFreeze-DefaultInit-5e51e6',
+        'head_lr': 5e-5,
+        'bert_lr': 1e-6,
+        'num_epochs': 5,
+        'batch_size': 1,
+        'num_layers': 3,
+        'warmup_epochs': 0.5,
+        # 'dropout': 0.4,
+        'accumulation_steps': 16,
+        'train_data': train_data,
+        'dev_data': dev_data, 
+    }
+    training_config4 = {
+        'experiment_name': 'NoFreeze-DefaultInit-lr1e51e6',
+        'head_lr': 1e-5,
+        'bert_lr': 1e-6,
+        'num_epochs': 4,
+        'batch_size': 1,
+        'num_layers': 3,
+        'warmup_epochs': 0.5,
+        # 'dropout': 0.1,
+        'accumulation_steps': 16,
+        'train_data': train_data,
+        'dev_data': dev_data, 
+    }
+
+
+
     # training_configs = [training_config_1, training_config_2]
     
     # training_config4 = {
@@ -232,9 +275,9 @@ def main():
     #     'accumulation_steps': 16,
     #     'dropout': 0.4,
     #     'train_data': train_data,
-    #     'dev_data': dev_data,
+    #     'dev_data': dev_data, 
     # }
-    training_configs = [training_config3]
+    training_configs = [training_config1, training_config2, training_config3, training_config4]
     
     checkpoint_dir = Path("checkpoints").absolute()
     checkpoint_dir.mkdir(parents=True, exist_ok=True)
